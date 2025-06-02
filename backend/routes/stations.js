@@ -1,7 +1,11 @@
 import express from "express";
 import { validationResult } from "express-validator";
 import createStationRules from "../rules/station.rules.js";
-import { createStation, getFilteredStations } from "../services/station.service.js";
+import {
+  createStation,
+  findAll,
+  findById,
+} from "../services/station.service.js";
 import auth from "../routes/middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -38,7 +42,7 @@ router.post(
 
 router.get("/", async (req, res) => {
   try {
-    const stations = await getFilteredStations(req.query);
+    const stations = await findAll(req.query);
 
     res.json({
       success: true,
@@ -48,6 +52,21 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error("Get Stations Error:", error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const station = await findById(req.params.id);
+    res.json({
+      success: true,
+      data: station,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(error.statusCode || 500).json({
+      message: error.message || "Server error",
+    });
   }
 });
 

@@ -12,7 +12,7 @@ export const createStation = async (stationData, userId) => {
   return newStation;
 };
 
-export const getFilteredStations = async (query) => {
+export const findAll = async (query) => {
   const { status, connectorType, minPower, maxPower } = query;
   const filter = {};
 
@@ -28,3 +28,11 @@ export const getFilteredStations = async (query) => {
   const stations = await store.findStations(filter);
   return stations;
 };
+
+export const findById = async (id) => {
+  const station = await store.findById(id);
+  if (!station) {
+    throw new Error("Station not found");
+  }
+  return station;
+}; 
