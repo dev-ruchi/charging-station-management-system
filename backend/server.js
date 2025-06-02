@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
 import authRouter from "./routes/auth.js";
+import stationRoutes from "./routes/stations.js";
 
 mongoose
   .connect(`${process.env.MONGODB_URI}/${process.env.DB_NAME}`)
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use('/api/stations', stationRoutes);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
