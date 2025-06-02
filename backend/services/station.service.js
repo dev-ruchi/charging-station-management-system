@@ -1,6 +1,6 @@
 import * as store from "../store/station.store.js";
 
-const createStation = async (stationData, userId) => {
+export const createStation = async (stationData, userId) => {
   const newStation = await store.create({
     ...stationData,
     createdBy: userId,
@@ -12,4 +12,19 @@ const createStation = async (stationData, userId) => {
   return newStation;
 };
 
-export default createStation;
+export const getFilteredStations = async (query) => {
+  const { status, connectorType, minPower, maxPower } = query;
+  const filter = {};
+
+  if (status) filter.status = status;
+  if (connectorType) filter.connectorType = connectorType;
+
+  if (minPower || maxPower) {
+    filter.powerOutput = {};
+    if (minPower) filter.powerOutput.$gte = Number(minPower);
+    if (maxPower) filter.powerOutput.$lte = Number(maxPower);
+  }
+
+  const stations = await store.findStations(filter);
+  return stations;
+};
