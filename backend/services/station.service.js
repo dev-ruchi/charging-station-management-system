@@ -1,8 +1,7 @@
 import * as store from "../store/station.store.js";
-import Station from "../models/station.models.js";
 
-export const createStation = async (stationData, userId) => {
-  const newStation = new Station({
+const createStation = async (stationData, userId) => {
+  const newStation = await store.create({
     ...stationData,
     createdBy: userId,
   });
@@ -12,3 +11,5 @@ export const createStation = async (stationData, userId) => {
 
   return newStation;
 };
+
+export default createStation;

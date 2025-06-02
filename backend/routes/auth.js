@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { signup } from "../services/auth.service.js";
+import { signup, login } from "../services/auth.service.js";
 
 router.post("/signup", async (req, res) => {
   try {
@@ -20,22 +20,23 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// router.post("/login", async (req, res) => {
-//   try {
-//     const { user, token } = await login(req.body);
+router.post("/login", async (req, res) => {
+  try {
+    const { user, token } = await login(req.body);
 
-//     res.status(200).json({
-//       message: "Login successful",
-//       user: { id: user._id, username: user.email },
-//       token,
-//     });
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     res.status(err.statusCode || 400).json({
-//       message: "Login failed",
-//       error: err.message,
-//     });
-//   }
-// });
+    res.status(200).json({
+      message: "Login successful",
+      user: { id: user._id, username: user.email },
+      token,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(err.statusCode || 400).json({
+      message: "Login failed",
+      error: err.message,
+    });
+  }
+});
+
 
 export default router;

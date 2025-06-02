@@ -42,3 +42,30 @@ export async function signup(data) {
     token,
   };
 }
+
+export async function login(data) {
+  const { email, password } = data;
+
+  if (!email || !password) {
+    throwErrorWithStatus(400, "Username and password are required");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throwErrorWithStatus(400, "Invalid credentials");
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    throwErrorWithStatus(400, "Invalid credentials");
+  }
+
+  const token = generateToken({ userId: user._id, email: user.email });
+
+  return {
+    user,
+    token,
+  };
+}
