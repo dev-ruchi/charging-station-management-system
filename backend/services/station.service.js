@@ -35,4 +35,25 @@ export const findById = async (id) => {
     throw new Error("Station not found");
   }
   return station;
-}; 
+};
+
+export const update = async (id, userId, updateData) => {
+  const station = await store.update(id);
+  if (!station) {
+    const error = new Error("Station not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  
+
+  if (station.createdBy._id.toString() !== userId.toString()) {
+    const error = new Error("Not authorized to update this station");
+    error.statusCode = 403;
+    throw error;
+  }
+
+
+  const updatedStation = await store.update(id, updateData);
+  return updatedStation;
+};

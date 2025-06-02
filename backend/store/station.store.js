@@ -13,3 +13,12 @@ export function findAll(filter = {}) {
 export function findById(id) {
  return Station.findById(id).populate("createdBy", "username email")
 } 
+
+
+export function update(id, updateData) {
+  return  Station.findByIdAndUpdate(
+    id,
+    { $set: updateData },
+    { new: true, runValidators: true }
+  ).populate("createdBy", "username email");
+};
