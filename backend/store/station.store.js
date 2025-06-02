@@ -21,4 +21,8 @@ export function update(id, updateData) {
     { $set: updateData },
     { new: true, runValidators: true }
   ).populate("createdBy", "username email");
+}; 
+
+export const deleteById = (id) => {
+  return Station.findByIdAndDelete(id);
 };
