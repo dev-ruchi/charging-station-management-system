@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import { signup, login } from "../services/auth.service.js";
 
-router.post("/signup", async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { savedUser, token } = await signup(req.body);
 
