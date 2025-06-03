@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 app.use('/api/stations', stationRoutes);
 
 app.listen(port, () => {
