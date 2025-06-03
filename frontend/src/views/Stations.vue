@@ -406,14 +406,13 @@ const filteredStations = computed(() => {
 // Get current user
 const currentUser = computed(() => {
   const user = authService.getCurrentUser();
-  console.log('Current user:', user);
+ 
   return user;
 });
 
 // Check if user can manage (edit/delete) a station
 const canManageStation = (station) => {
-  console.log('Checking station:', station);
-  console.log('Current user:', currentUser.value);
+ 
 
   if (!currentUser.value) {
     console.log('No current user found');
@@ -429,10 +428,6 @@ const canManageStation = (station) => {
   const creatorId = typeof station.createdBy === 'object' ? station.createdBy._id : station.createdBy;
   const userId = currentUser.value.id;
 
-  console.log('Creator ID:', creatorId);
-  console.log('User ID:', userId);
-  console.log('Types - Creator ID:', typeof creatorId, 'User ID:', typeof userId);
-  console.log('Comparison result:', creatorId === userId);
 
   return creatorId === userId;
 };
@@ -443,13 +438,10 @@ const fetchStations = async () => {
     loading.value = true;
     error.value = null;
     const response = await stationService.getAllStations();
-    console.log('Fetched stations:', response);
+  
     stations.value = response.data || [];
     
-    // Log each station's createdBy field
-    stations.value.forEach((station, index) => {
-      console.log(`Station ${index + 1} createdBy:`, station.createdBy);
-    });
+  
   } catch (err) {
     handleError(err, 'Failed to load charging stations');
   } finally {
@@ -523,7 +515,7 @@ const deleteSelectedStation = async () => {
 };
 
 const handleError = (err, defaultMessage) => {
-  console.error('Operation error:', err);
+  
   if (err.response?.status === 403) {
     error.value = 'You are not authorized to perform this action';
   } else if (err.response?.status === 401) {
