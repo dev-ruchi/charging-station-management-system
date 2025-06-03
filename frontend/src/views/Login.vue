@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-        Sign in to your account
+      Log in to your account
       </h2>
     </div>
 
@@ -107,8 +107,14 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              {{ loading ? "Signing in..." : "Sign in" }}
+              {{ loading ? "Logging in..." : "Log in" }}
             </button>
+          </div>
+
+          <div class="text-sm text-center">
+            <router-link to="/signup" class="font-medium text-blue-600 hover:text-blue-500">
+              Don't have an account? Sign up
+            </router-link>
           </div>
         </form>
       </div>
@@ -117,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { authService } from "../services/api";
 
@@ -128,8 +134,30 @@ const rememberMe = ref(false);
 const loading = ref(false);
 const error = ref("");
 
+// Basic email validation
+const isEmailValid = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.value);
+});
+
+// Password validation (at least 6 characters)
+const isPasswordValid = computed(() => {
+  return password.value.length >= 6;
+});
+
 const handleLogin = async () => {
   try {
+    // Validate form before submission
+    if (!isEmailValid.value) {
+      error.value = "Please enter a valid email address";
+      return;
+    }
+
+    if (!isPasswordValid.value) {
+      error.value = "Password must be at least 6 characters long";
+      return;
+    }
+
     loading.value = true;
     error.value = ""; // Clear any previous errors
 
