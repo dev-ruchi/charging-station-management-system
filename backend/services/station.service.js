@@ -25,7 +25,7 @@ export const findAll = async (query) => {
     if (maxPower) filter.powerOutput.$lte = Number(maxPower);
   }
 
-  const stations = await store.findStations(filter);
+  const stations = await store.findAll(filter);
   return stations;
 };
 
