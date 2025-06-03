@@ -34,9 +34,10 @@
               </svg>
               Back to Stations
             </button>
-            <h1 class="text-3xl font-bold text-gray-900">{{ station.name }}</h1>
+         
           </div>
           <div class="mt-2">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ station.name }}</h1>
             <span
               :class="{
                 'px-3 py-1 text-sm rounded-full font-medium': true,
@@ -47,6 +48,7 @@
               {{ station.status }}
             </span>
           </div>
+
         </div>
       </div>
 
