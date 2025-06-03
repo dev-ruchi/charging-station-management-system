@@ -9,9 +9,24 @@ const api = axios.create({
   },
 });
 
+// Add token to requests if available
+api.interceptors.request.use(
+  (config) => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
   async signup(userData) {
-    const response = await api.post("/auth/register", userData);
+    const response = await api.post("/auth/signup", userData);
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.savedUser));
@@ -31,6 +46,17 @@ export const authService = {
   logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+  },
+
+  getCurrentUser() {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error("Error parsing user data:", e);
+      return null;
+    }
   },
 };
 
