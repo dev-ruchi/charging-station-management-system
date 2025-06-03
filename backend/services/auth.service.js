@@ -18,10 +18,16 @@ export async function signup(data) {
     throwErrorWithStatus(400, "Name, email and password are required");
   }
 
- 
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throwErrorWithStatus(400, "Email already in use");
+  // Check if email already exists
+  const existingEmail = await User.findOne({ email });
+  if (existingEmail) {
+    throwErrorWithStatus(409, "Email already registered");
+  }
+
+  // Check if username already exists
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    throwErrorWithStatus(409, "Username already taken");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,7 +36,6 @@ export async function signup(data) {
     username,
     email,
     password: hashedPassword,
-  
   });
 
   const savedUser = await user.save();

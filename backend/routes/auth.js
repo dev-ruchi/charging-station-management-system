@@ -1,8 +1,9 @@
 import express from "express";
 const router = express.Router();
 import { signup, login } from "../services/auth.service.js";
+import { userValidationRules } from "../rules/user.rules.js";
 
-router.post("/register", async (req, res) => {
+router.post("/register", userValidationRules, async (req, res) => {
   try {
     const { savedUser, token } = await signup(req.body);
 
@@ -20,7 +21,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", userValidationRules, async (req, res) => {
   try {
     const { user, token } = await login(req.body);
 
@@ -37,6 +38,5 @@ router.post("/login", async (req, res) => {
     });
   }
 });
-
 
 export default router;
