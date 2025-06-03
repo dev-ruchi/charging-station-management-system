@@ -2,12 +2,23 @@
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Charging Stations</h1>
-      <button
-        @click="openCreateModal"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        Add New Station
-      </button>
+      <div class="flex space-x-4">
+        <button
+          @click="router.push('/map')"
+          class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          Map View
+        </button>
+        <button
+          @click="openCreateModal"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Add New Station
+        </button>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -47,39 +58,44 @@
         :key="station._id"
         class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
       >
-        <div class="flex justify-between items-start mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">{{ station.name }}</h2>
-          <span
-            :class="{
-              'px-2 py-1 text-sm rounded-full': true,
-              'bg-green-100 text-green-800': station.status === 'Active',
-              'bg-red-100 text-red-800': station.status === 'Inactive'
-            }"
-          >
-            {{ station.status }}
-          </span>
-        </div>
+        <div 
+          @click="router.push(`/stations/${station._id}`)"
+          class="cursor-pointer"
+        >
+          <div class="flex justify-between items-start mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">{{ station.name }}</h2>
+            <span
+              :class="{
+                'px-2 py-1 text-sm rounded-full': true,
+                'bg-green-100 text-green-800': station.status === 'Active',
+                'bg-red-100 text-red-800': station.status === 'Inactive'
+              }"
+            >
+              {{ station.status }}
+            </span>
+          </div>
 
-        <div class="space-y-2 text-gray-600">
-          <p class="flex items-center">
-            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            {{ station.location.address }}
-          </p>
-          <p class="flex items-center">
-            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            {{ station.powerOutput }}kW
-          </p>
-          <p class="flex items-center">
-            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-            </svg>
-            {{ station.connectorType }}
-          </p>
+          <div class="space-y-2 text-gray-600">
+            <p class="flex items-center">
+              <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {{ station.location.address }}
+            </p>
+            <p class="flex items-center">
+              <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {{ station.powerOutput }}kW
+            </p>
+            <p class="flex items-center">
+              <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+              {{ station.connectorType }}
+            </p>
+          </div>
         </div>
 
         <!-- Action Buttons -->

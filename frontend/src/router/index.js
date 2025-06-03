@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
 import Signup from "../views/Signup.vue";
 import Stations from "../views/Stations.vue";
+import StationDetails from "../views/StationDetails.vue";
+import MapView from "../views/MapView.vue";
 
 // Navigation guard for protected routes
 const requireAuth = (to, from, next) => {
@@ -33,6 +35,18 @@ const routes = [
     path: "/stations",
     name: "Stations",
     component: Stations,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: "/stations/:id",
+    name: "StationDetails",
+    component: StationDetails,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: "/map",
+    name: "MapView",
+    component: MapView,
     beforeEnter: requireAuth,
   },
 ];
