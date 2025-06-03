@@ -36,37 +36,58 @@
             </button>
             <h1 class="text-3xl font-bold text-gray-900">{{ station.name }}</h1>
           </div>
-          <p class="mt-2 text-sm text-gray-500">
-            Created by {{ station.createdBy?.username || 'Unknown' }}
-          </p>
+          <div class="mt-2">
+            <span
+              :class="{
+                'px-3 py-1 text-sm rounded-full font-medium': true,
+                'bg-green-100 text-green-800': station.status === 'Active',
+                'bg-red-100 text-red-800': station.status === 'Inactive'
+              }"
+            >
+              {{ station.status }}
+            </span>
+          </div>
         </div>
-        <span
-          :class="{
-            'px-3 py-1 text-sm rounded-full font-medium': true,
-            'bg-green-100 text-green-800': station.status === 'Active',
-            'bg-red-100 text-red-800': station.status === 'Inactive'
-          }"
-        >
-          {{ station.status }}
-        </span>
       </div>
 
       <!-- Main Content -->
       <div class="bg-white shadow rounded-lg overflow-hidden">
         <!-- Map Section -->
-        <div class="h-64 bg-gray-200 relative">
-          <!-- Map placeholder - You can integrate a real map here -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="text-center">
-              <svg class="h-12 w-12 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <p class="mt-2 text-sm text-gray-500">
-                Location: {{ station.location.latitude }}, {{ station.location.longitude }}
-              </p>
-            </div>
-          </div>
+        <div class="h-64 relative">
+          <l-map
+            v-model="zoom"
+            v-model:zoom="zoom"
+            :center="[station.location.latitude, station.location.longitude]"
+            :use-global-leaflet="false"
+          >
+            <l-tile-layer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              layer-type="base"
+              name="OpenStreetMap"
+            />
+            <l-marker
+              :lat-lng="[station.location.latitude, station.location.longitude]"
+            >
+              <l-popup>
+                <div class="p-2">
+                  <h3 class="font-semibold text-gray-900">{{ station.name }}</h3>
+                  <p class="text-sm text-gray-600">{{ station.location.address }}</p>
+                  <div class="mt-2 flex items-center space-x-2">
+                    <span
+                      :class="{
+                        'px-2 py-0.5 text-xs rounded-full': true,
+                        'bg-green-100 text-green-800': station.status === 'Active',
+                        'bg-red-100 text-red-800': station.status === 'Inactive'
+                      }"
+                    >
+                      {{ station.status }}
+                    </span>
+                    <span class="text-sm text-gray-600">{{ station.powerOutput }}kW</span>
+                  </div>
+                </div>
+              </l-popup>
+            </l-marker>
+          </l-map>
         </div>
 
         <!-- Details Section -->
@@ -200,6 +221,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { stationService } from '../services/station.service';
 import { authService } from '../services/api';
+import 'leaflet/dist/leaflet.css';
+import { LMap, LTileLayer, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 
 const router = useRouter();
 const route = useRoute();
@@ -219,6 +242,7 @@ const loading = ref(true);
 const error = ref(null);
 const showDeleteModal = ref(false);
 const deleting = ref(false);
+const zoom = ref(15); // Closer zoom for single station view
 
 // Get current user
 const currentUser = authService.getCurrentUser();
@@ -264,4 +288,8 @@ const handleDelete = async () => {
 };
 
 onMounted(fetchStation);
-</script> 
+</script>
+
+<style>
+@import 'leaflet/dist/leaflet.css';
+</style> 
