@@ -171,8 +171,8 @@ const handleLogin = async () => {
     storage.setItem('token', data.token);
     storage.setItem('user', JSON.stringify(data.user));
 
-    // Redirect to dashboard
-    router.push('/dashboard');
+    // Redirect to stations page
+    router.push('/stations');
   } catch (err) {
     console.error("Login error:", err);
     error.value = err.response?.data?.error || err.message || "Failed to login. Please try again.";

@@ -144,8 +144,8 @@ const handleSignup = async () => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.savedUser));
 
-    // Redirect to dashboard
-    router.push('/dashboard');
+    // Redirect to stations page
+    router.push('/stations');
   } catch (err) {
     console.error("Signup error:", err);
     error.value = err.response?.data?.error || err.message || "Failed to create account. Please try again.";
