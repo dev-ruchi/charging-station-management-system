@@ -13,6 +13,73 @@
       </button>
     </div>
 
+    <!-- Filters Section -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Search Input -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+          <input
+            v-model="filters.search"
+            type="text"
+            placeholder="Search by name or address"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select
+            v-model="filters.status"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          >
+            <option value="">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Power Output Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Min Power Output (kW)</label>
+          <input
+            v-model.number="filters.minPower"
+            type="number"
+            min="0"
+            placeholder="Min power"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <!-- Connector Type Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Connector Type</label>
+          <select
+            v-model="filters.connectorType"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          >
+            <option value="">All Types</option>
+            <option value="Type 1">Type 1</option>
+            <option value="Type 2">Type 2</option>
+            <option value="CHAdeMO">CHAdeMO</option>
+            <option value="CCS">CCS</option>
+            <option value="Tesla Supercharger">Tesla Supercharger</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Clear Filters Button -->
+      <div class="mt-4 flex justify-end">
+        <button
+          @click="clearFilters"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center py-8">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -47,7 +114,7 @@
             name="OpenStreetMap"
           />
           <l-marker
-            v-for="station in stations"
+            v-for="station in filteredStations"
             :key="station._id"
             :lat-lng="[station.location.latitude, station.location.longitude]"
             @click="handleMarkerClick(station)"
@@ -84,7 +151,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { stationService } from '../services/station.service';
 import 'leaflet/dist/leaflet.css';
@@ -95,7 +162,53 @@ const stations = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const zoom = ref(13);
-const center = ref([0, 0]); // Will be updated when stations are loaded
+const center = ref([0, 0]);
+
+const filters = ref({
+  search: '',
+  status: '',
+  minPower: null,
+  connectorType: ''
+});
+
+const filteredStations = computed(() => {
+  return stations.value.filter(station => {
+    // Search filter
+    if (filters.value.search) {
+      const searchTerm = filters.value.search.toLowerCase();
+      const matchesSearch = 
+        station.name.toLowerCase().includes(searchTerm) ||
+        station.location.address.toLowerCase().includes(searchTerm);
+      if (!matchesSearch) return false;
+    }
+
+    // Status filter
+    if (filters.value.status && station.status !== filters.value.status) {
+      return false;
+    }
+
+    // Power output filter
+    if (filters.value.minPower && station.powerOutput < filters.value.minPower) {
+      return false;
+    }
+
+    // Connector type filter
+    if (filters.value.connectorType && station.connectorType !== filters.value.connectorType) {
+      return false;
+    }
+
+    return true;
+  });
+});
+
+const clearFilters = () => {
+  filters.value = {
+    search: '',
+    status: '',
+    minPower: null,
+    connectorType: ''
+  };
+};
 
 const fetchStations = async () => {
   try {
@@ -104,9 +217,9 @@ const fetchStations = async () => {
     const response = await stationService.getAllStations();
     stations.value = response.data || [];
     
-    // Set map center to the first station or default location
-    if (stations.value.length > 0) {
-      const firstStation = stations.value[0];
+    // Set map center to the first filtered station or default location
+    if (filteredStations.value.length > 0) {
+      const firstStation = filteredStations.value[0];
       center.value = [firstStation.location.latitude, firstStation.location.longitude];
     } else {
       // Default to a central location if no stations
