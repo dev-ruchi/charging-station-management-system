@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 const port = 3000;
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Welcome to the Charging Station Management System!");
 });
 
 app.use("/api/auth", authRouter);
